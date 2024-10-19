@@ -102,7 +102,7 @@ async function main() {
 
 function addCheckboxToSteps(inputString) {
   // Use a regular expression to find each step indicator and add the checkbox
-  const updatedString = inputString.replace(/(\*\*\d+\.\*\*\s+Step)/g, '- [ ] $1');
+  const updatedString = inputString.replace(/(?=\*\*\d+\.\*\*\s)/g, '- [ ] ');
   return updatedString;
 }
 
