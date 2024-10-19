@@ -60,6 +60,7 @@ jobs:
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
+          git fetch origin
           git checkout prod
           git merge --no-ff prod-review -m "Merge prod-review into prod after successful compliance check"
           git push origin prod
