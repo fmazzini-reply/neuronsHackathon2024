@@ -47,6 +47,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const message = `${{ steps.compliance_check.outputs.message }}`.replace(/\n/g, '  \n');
+            console.log(message);
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
