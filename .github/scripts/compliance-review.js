@@ -106,19 +106,14 @@ main()
     // console.log(`::set-output name=status::${result.status}`);
     // console.log(`::set-output name=message::${result.message}`);
 
+    let escapedMessage = result.message
+      .replace(/%/g, '%25')    // Escape %
+      .replace(/\n/g, '%0A')   // Escape newlines
+      .replace(/\r/g, '%0D');  // Escape carriage returns
 
-    const fs = require('fs');
-
-    // Use environment files for GitHub Action outputs
-    // Write status to the GitHub output file
-    fs.appendFileSync(process.env.GITHUB_OUTPUT, `status=${result.status}\n`);
-
-    // Write the message (which might be multiline) to the GitHub output file
-    fs.appendFileSync(process.env.GITHUB_OUTPUT, `message<<EOF\n${result.message}\nEOF\n`);
-
-    // Optionally, also write to GITHUB_ENV if you want to access it through environment variables
-    fs.appendFileSync(process.env.GITHUB_ENV, `status=${result.status}\n`);
-    fs.appendFileSync(process.env.GITHUB_ENV, `message<<EOF\n${result.message}\nEOF\n`);
+    // Use the ::set-output command for both status and the escaped message
+    console.log(`::set-output name=status::${result.status}`);
+    console.log(`::set-output name=message::${escapedMessage}`);
 
   })
   .catch(error => {
