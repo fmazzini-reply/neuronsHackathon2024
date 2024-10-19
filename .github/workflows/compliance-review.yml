@@ -6,7 +6,11 @@ on:
       - prod-review
 
 permissions:
-  issues: write
+  actions: write       # Necessary to cancel workflow executions
+  checks: write        # Necessary to write reports
+  pull-requests: write # Necessary to comment on PRs
+  contents: read
+  packages: write
   
 jobs:
   compliance_review:
