@@ -6,7 +6,15 @@ on:
       - prod-review
 
 permissions:
+  actions: write       # Necessary to cancel workflow executions
+  checks: write        # Necessary to write reports
+  pull-requests: write # Necessary to comment on PRs
   issues: write
+  statuses: write
+  contents: write
+  packages: write
+  deployments: write
+  discussions: write
   
 jobs:
   compliance_review:
@@ -14,7 +22,9 @@ jobs:
 
     steps:
       - name: Checkout repository content
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          repository: fmazzini-reply/neuronsHackathon2024
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -31,24 +41,28 @@ jobs:
         run: node .github/scripts/compliance-review.js
 
       - name: Create issue if compliance check fails
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.compliance_check.outputs.status == 'fail'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const message = `${{ steps.compliance_check.outputs.message }}`;
+            const decodedMessage = atob(message);
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Compliance Review Failed - ${new Date().toISOString()}`,
-              body: '${{ steps.compliance_check.outputs.message }}'
-            })
+              body: decodedMessage
+            });
 
       - name: Merge to prod if compliance check passes
         if: steps.compliance_check.outputs.status == 'pass'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
+          git fetch origin --unshallow
           git checkout prod
           git merge --no-ff prod-review -m "Merge prod-review into prod after successful compliance check"
           git push origin prod
-

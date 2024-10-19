@@ -89,7 +89,7 @@ async function main() {
     const finalResult = await pollComplianceResult(contextId);
     console.log(`Final result: ${finalResult}`);
 
-    if (finalResult.startsWith('Your request is already fully compliant with internal policies and guidelines')) {
+    if (finalResult.startsWith('Your request is already fully compliant')) {
       return { status: 'pass', message: finalResult };
     } else {
       return { status: 'fail', message: finalResult };
@@ -100,11 +100,33 @@ async function main() {
   }
 }
 
+function addCheckboxToSteps(inputString) {
+  // Use a regular expression to find each step indicator and add the checkbox
+  const updatedString = inputString.replace(/(?=\*\*\d+\.\*\*\s)/g, '- [ ] ');
+  return updatedString;
+}
+
 main()
   .then(result => {
     // Log result in a format GitHub Actions can capture
+    const rawMessage = addCheckboxToSteps(result.message);
+    console.log(rawMessage);
+    const message = btoa(rawMessage);
+    console.log(message);
     console.log(`::set-output name=status::${result.status}`);
-    console.log(`::set-output name=message::${result.message}`);
+    console.log(`::set-output name=message::${message}`);
+
+    // let escapedMessage = result.message
+    //   .replace(/%/g, '%25')    // Escape %
+    //   .replace(/\n/g, '%0A')   // Escape newlines
+    //   .replace(/\r/g, '%0D');  // Escape carriage returns
+
+    // Use the ::set-output command for both status and the escaped message
+    // console.log(`::set-output name=status::${result.status}`);
+    // console.log(`::set-output name=message::${escapedMessage}`);
+    // fs.writeFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}`);
+    // fs.writeFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}`);
+
   })
   .catch(error => {
     console.error('Unhandled error:', error);
