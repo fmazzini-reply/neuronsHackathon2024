@@ -103,8 +103,10 @@ async function main() {
 main()
   .then(result => {
     // Log result in a format GitHub Actions can capture
+    const message = result.message.replace(/\n/g, '  \n');
+    console.log(message);
     console.log(`::set-output name=status::${result.status}`);
-    console.log(`::set-output name=message::${result.message}`);
+    console.log(`::set-output name=message::${message}`);
 
     // let escapedMessage = result.message
     //   .replace(/%/g, '%25')    // Escape %
