@@ -100,10 +100,18 @@ async function main() {
   }
 }
 
+function addCheckboxToSteps(inputString) {
+  // Use a regular expression to find each step indicator and add the checkbox
+  const updatedString = inputString.replace(/(\*\*\d+\.\*\*\s+Step)/g, '- [ ] $1');
+  return updatedString;
+}
+
 main()
   .then(result => {
     // Log result in a format GitHub Actions can capture
-    const message = btoa(result.message);
+    const rawMessage = addCheckboxToSteps(result.message);
+    console.log(rawMessage);
+    const message = btoa(rawMessage);
     console.log(message);
     console.log(`::set-output name=status::${result.status}`);
     console.log(`::set-output name=message::${message}`);
