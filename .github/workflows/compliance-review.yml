@@ -50,7 +50,11 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Compliance Review Failed - ${new Date().toISOString()}`,
-              body: '${{ steps.compliance_check.outputs.message }}'
+              body: |
+                eslint and diff report:
+                ```
+                ${{ steps.compliance_check.outputs.message }}
+                ```
             })
 
       - name: Merge to prod if compliance check passes

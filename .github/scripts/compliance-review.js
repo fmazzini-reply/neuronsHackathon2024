@@ -106,10 +106,10 @@ main()
     // console.log(`::set-output name=status::${result.status}`);
     // console.log(`::set-output name=message::${result.message}`);
 
-    let escapedMessage = result.message
-      .replace(/%/g, '%25')    // Escape %
-      .replace(/\n/g, '%0A')   // Escape newlines
-      .replace(/\r/g, '%0D');  // Escape carriage returns
+    // let escapedMessage = result.message
+    //   .replace(/%/g, '%25')    // Escape %
+    //   .replace(/\n/g, '%0A')   // Escape newlines
+    //   .replace(/\r/g, '%0D');  // Escape carriage returns
 
     // Use the ::set-output command for both status and the escaped message
     console.log(`::set-output name=status::${result.status}`);
