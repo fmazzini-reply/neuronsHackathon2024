@@ -103,7 +103,7 @@ async function main() {
 main()
   .then(result => {
     // Log result in a format GitHub Actions can capture
-    const message = result.message.replace(/\n/g, '  \n');
+    const message = btoa(result.message);
     console.log(message);
     console.log(`::set-output name=status::${result.status}`);
     console.log(`::set-output name=message::${message}`);
