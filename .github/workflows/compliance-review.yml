@@ -9,6 +9,7 @@ permissions:
   actions: write       # Necessary to cancel workflow executions
   checks: write        # Necessary to write reports
   pull-requests: write # Necessary to comment on PRs
+  statuses: write
   contents: read
   packages: write
   
@@ -37,6 +38,8 @@ jobs:
         run: node .github/scripts/compliance-review.js
 
       - name: Create issue if compliance check fails
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.compliance_check.outputs.status == 'fail'
         uses: actions/github-script@v6
         with:
