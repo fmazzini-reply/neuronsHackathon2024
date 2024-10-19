@@ -89,7 +89,7 @@ async function main() {
     const finalResult = await pollComplianceResult(contextId);
     console.log(`Final result: ${finalResult}`);
 
-    if (finalResult.startsWith('Your request is already fully compliant with internal policies and guidelines')) {
+    if (finalResult.startsWith('Your request is already fully compliant')) {
       return { status: 'pass', message: finalResult };
     } else {
       return { status: 'fail', message: finalResult };
@@ -103,8 +103,23 @@ async function main() {
 main()
   .then(result => {
     // Log result in a format GitHub Actions can capture
-    console.log(`::set-output name=status::${result.status}`);
-    console.log(`::set-output name=message::${result.message}`);
+    // console.log(`::set-output name=status::${result.status}`);
+    // console.log(`::set-output name=message::${result.message}`);
+
+
+    const fs = require('fs');
+
+    // Use environment files for GitHub Action outputs
+    // Write status to the GitHub output file
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `status=${result.status}\n`);
+
+    // Write the message (which might be multiline) to the GitHub output file
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `message<<EOF\n${result.message}\nEOF\n`);
+
+    // Optionally, also write to GITHUB_ENV if you want to access it through environment variables
+    fs.appendFileSync(process.env.GITHUB_ENV, `status=${result.status}\n`);
+    fs.appendFileSync(process.env.GITHUB_ENV, `message<<EOF\n${result.message}\nEOF\n`);
+
   })
   .catch(error => {
     console.error('Unhandled error:', error);
