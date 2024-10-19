@@ -11,8 +11,10 @@ permissions:
   pull-requests: write # Necessary to comment on PRs
   issues: write
   statuses: write
-  contents: read
+  contents: write
   packages: write
+  deployments: write
+  discussions: write
   
 jobs:
   compliance_review:
