@@ -46,16 +46,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const message = `${{ steps.compliance_check.outputs.message }}`;
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Compliance Review Failed - ${new Date().toISOString()}`,
-              body: |
-                eslint and diff report:
-                ```
-                ${{ steps.compliance_check.outputs.message }}
-                ```
-            })
+              body: `\`\`\`\n${message}\n\`\`\``
+            });
 
       - name: Merge to prod if compliance check passes
         if: steps.compliance_check.outputs.status == 'pass'
