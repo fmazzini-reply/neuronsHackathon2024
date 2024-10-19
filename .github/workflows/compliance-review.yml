@@ -9,6 +9,7 @@ permissions:
   actions: write       # Necessary to cancel workflow executions
   checks: write        # Necessary to write reports
   pull-requests: write # Necessary to comment on PRs
+  issues: write
   statuses: write
   contents: read
   packages: write
