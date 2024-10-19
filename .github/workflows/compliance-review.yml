@@ -1,0 +1,54 @@
+name: Compliance Review
+
+on:
+  push:
+    branches:
+      - prod-review
+
+permissions:
+  issues: write
+  
+jobs:
+  compliance_review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install axios @octokit/rest
+
+      - name: Run compliance review script
+        id: compliance_check
+        env:
+          GRANT_SECRET: ${{ secrets.GRANT_SECRET }}
+        run: node .github/scripts/compliance-review.js
+
+      - name: Create issue if compliance check fails
+        if: steps.compliance_check.outputs.status == 'fail'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Compliance Review Failed - ${new Date().toISOString()}`,
+              body: '${{ steps.compliance_check.outputs.message }}'
+            })
+
+      - name: Merge to prod if compliance check passes
+        if: steps.compliance_check.outputs.status == 'pass'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git checkout prod
+          git merge --no-ff prod-review -m "Merge prod-review into prod after successful compliance check"
+          git push origin prod
+
