@@ -2,11 +2,12 @@ provider "aws" {
   region = "us-west-2"
 }
 
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = "my-terraformbucket"
+#For storing C3 data
+resource "aws_s3_bucket" "profilePicsBucket" {
+  bucket = "my-profilePicsBucket"
 
   tags = {
-    Name        = "MyBucket"
-    Environment = "Dev"
+    Name        = "profilePicsBucket"
+    Environment = "prod"
   }
 }
