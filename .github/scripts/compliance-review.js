@@ -59,7 +59,7 @@ async function pollComplianceResult(contextId) {
     console.log(JSON.stringify(response.data));
 
     if (response.data["response"].startsWith('Not yet.') === false) {
-      return response.data.response;
+      return {response: response.data.response, cotLink: response.data.sources.url[0].href};
     }
 
     await new Promise(resolve => setTimeout(resolve, 10000));
@@ -86,13 +86,14 @@ async function main() {
     const contextId = await sendComplianceReview(repoContent);
     console.log(`Compliance review initiated. Context ID: ${contextId}`);
 
-    const finalResult = await pollComplianceResult(contextId);
+    const finalResponse = await pollComplianceResult(contextId);
+    const finalResult = finalResponse.response;
     console.log(`Final result: ${finalResult}`);
 
     if (finalResult.startsWith('Your request is already fully compliant')) {
-      return { status: 'pass', message: finalResult };
+      return { status: 'pass', message: finalResult, cotLink: finalResponse?.cotLink || "" };
     } else {
-      return { status: 'fail', message: finalResult };
+      return { status: 'fail', message: finalResult, cotLink: finalResponse?.cotLink || ""};
     }
   } catch (error) {
     console.error('Error during compliance review:', error);
@@ -112,8 +113,10 @@ main()
     // Log result in a format GitHub Actions can capture
     const rawMessage = addCheckboxToSteps(result.message);
     console.log(rawMessage);
+
+    const rawMessageWithLink = `${rawMessage}\n\n[Underlying reasoning - see the Chain of Thoughts](${result.cotLink})`;
     // const message = btoa(rawMessage);
-    const message = Buffer.from(rawMessage, 'utf-8').toString('base64');
+    const message = Buffer.from(rawMessageWithLink, 'utf-8').toString('base64');
     console.log(message);
     console.log(`::set-output name=status::${result.status}`);
     console.log(`::set-output name=message::${message}`);
