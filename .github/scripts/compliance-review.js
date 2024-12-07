@@ -116,6 +116,7 @@ main()
     console.log(message);
     console.log(`::set-output name=status::${result.status}`);
     console.log(`::set-output name=message::${message}`);
+    
 
     // let escapedMessage = result.message
     //   .replace(/%/g, '%25')    // Escape %
