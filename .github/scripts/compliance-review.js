@@ -115,6 +115,7 @@ main()
     console.log(rawMessage);
 
     const rawMessageWithLink = `${rawMessage}\n\n[Underlying reasoning - see the Chain of Thoughts](${result.cotLink})`;
+    console.log(rawMessageWithLink);
     // const message = btoa(rawMessage);
     const message = Buffer.from(rawMessageWithLink, 'utf-8').toString('base64');
     console.log(message);
