@@ -3,7 +3,7 @@ const path = require('path');
 const axios = require('axios');
 const { execSync } = require('child_process');
 
-const API_URL = 'https://9vtm5bda87.execute-api.eu-central-1.amazonaws.com/chat-poll';
+const API_URL = 'https://9vtm5bda87.execute-api.eu-central-1.amazonaws.com/chat-poll-gb';
 const GRANT_SECRET = process.env.GRANT_SECRET;
 
 async function getRepositoryContent(includeFolders) {
