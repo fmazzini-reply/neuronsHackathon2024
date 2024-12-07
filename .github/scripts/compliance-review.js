@@ -111,7 +111,8 @@ main()
     // Log result in a format GitHub Actions can capture
     const rawMessage = addCheckboxToSteps(result.message);
     console.log(rawMessage);
-    const message = btoa(rawMessage);
+    // const message = btoa(rawMessage);
+    const message = Buffer.from(rawMessage, 'utf-8').toString('base64');
     console.log(message);
     console.log(`::set-output name=status::${result.status}`);
     console.log(`::set-output name=message::${message}`);
