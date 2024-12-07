@@ -108,6 +108,7 @@ function addCheckboxToSteps(inputString) {
 
 main()
   .then(result => {
+    console.log(`Result obj: ${JSON.stringify(result)}`)
     // Log result in a format GitHub Actions can capture
     const rawMessage = addCheckboxToSteps(result.message);
     console.log(rawMessage);
