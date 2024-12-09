@@ -1,10 +1,17 @@
 provider "aws" {
-region = "us-east-1"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "public_bucket" { 
   bucket = "public-bucket-example" 
   acl = "private" 
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" { 
