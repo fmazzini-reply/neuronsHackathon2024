@@ -1,10 +1,25 @@
 provider "aws" {
-region = "us-east-1"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "public_bucket" { 
   bucket = "public-bucket-example" 
   acl = "private" 
+  versioning {
+    enabled = true
+    mfa_delete = true
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+  logging {
+    target_bucket = "log-bucket"
+    target_prefix = "log/"
+  }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" { 
@@ -14,9 +29,9 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
     Statement = [ { 
       Action = "s3:GetObject" 
       Effect = "Allow" 
-      Resource = "${aws_s3_bucket.public_bucket.arn}/specific-path/*" 
+      Resource = "${aws_s3_bucket.public_bucket.arn}/profilePictures/*" 
       Principal = { 
-        AWS = "arn:aws:iam::account-id:user/specific-user" 
+        AWS = "arn:aws:iam::234657654:user/francescomazzini" 
       } 
     } ] 
   }) 
