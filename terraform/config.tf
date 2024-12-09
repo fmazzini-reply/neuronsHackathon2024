@@ -4,7 +4,7 @@ region = "us-east-1"
 
 resource "aws_s3_bucket" "public_bucket" { 
   bucket = "public-bucket-example" 
-  acl = "public-read" 
+  acl = "private" 
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" { 
@@ -14,8 +14,10 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
     Statement = [ { 
       Action = "s3:GetObject" 
       Effect = "Allow" 
-      Resource = "${aws_s3_bucket.public_bucket.arn}/" 
-      Principal = "" 
+      Resource = "${aws_s3_bucket.public_bucket.arn}/specific-path/*" 
+      Principal = { 
+        AWS = "arn:aws:iam::account-id:user/specific-user" 
+      } 
     } ] 
   }) 
 }
